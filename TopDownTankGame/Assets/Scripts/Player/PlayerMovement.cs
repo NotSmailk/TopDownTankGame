@@ -1,107 +1,87 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement
 {
-    [field: SerializeField, Range(1, 20)] private int m_speed = 5;
-    [field: SerializeField, Range (5, 90)] private int m_rotationSpeed = 5;
-    [field: SerializeField] private GameObject m_main;
-    [field: SerializeField] private GameObject m_tower;
+    private int _speed = 5;
+    private int _rotationSpeed = 90;
+    private GameObject _main;
+    private GameObject _tower;
+    private Rigidbody _rigidbody;
+    private Vector3 _tankDirection;
+    private bool _isInversedMoving = false;
 
-    private PlayerComponents m_playerComponents;
-    private Rigidbody m_rigidbody;
-    private Vector3 m_tankDirection;
-    private bool m_isInversedMoving = false;
+    public GameObject MainModel => _main;
+    public Vector3 TowerDirection => _tower.transform.right.normalized;
 
-    public GameObject MainModel { get => m_main; }
-
-    #region MainMethods
-
-    private void Start()
+    public void Initialize(Rigidbody rigidbody, GameObject tower, GameObject main)
     {
-        m_playerComponents = GetComponent<PlayerComponents>();
-
-        m_rigidbody = GetComponent<Rigidbody>();
+        _rigidbody = rigidbody;
+        _tower = tower;
+        _main = main;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
         RotateTankBody();
 
         MoveTankBody();
     }
 
-    #endregion MainMethodss
-
-    #region GetMethods
-
-    public Vector3 GetTowerDirection()
-    {
-        return m_tower.transform.right.normalized;
-    }
-
-    #endregion
-
-    #region CalculatingMethods
-
     private void MoveTankBody()
     {
-        float vertical = m_playerComponents.PlayerInputs.GetVerticalAxis();
+        float vertical = GameInputs.GetVerticalAxis();
 
-        m_rigidbody.velocity = m_tankDirection * m_speed * vertical;
+        _rigidbody.velocity = _tankDirection * _speed * vertical;
     }
 
     private void RotateTankBody()
     {
-        Vector3 playerRotation = m_main.transform.rotation.eulerAngles;
+        Vector3 playerRotation = _main.transform.rotation.eulerAngles;
 
-        float vertical = m_playerComponents.PlayerInputs.GetVerticalAxis() > -1 ? 1 : -1;
-        float horizontal = m_playerComponents.PlayerInputs.GetHorizontalAxis();
+        float vertical = GameInputs.GetVerticalAxis() > -1 ? 1 : -1;
+        float horizontal = GameInputs.GetHorizontalAxis();
 
-        float yAngle = Mathf.MoveTowardsAngle(playerRotation.y, playerRotation.y + 90f * horizontal * vertical, m_rotationSpeed * Time.deltaTime);
+        float yAngle = Mathf.MoveTowardsAngle(playerRotation.y, playerRotation.y + 90f * horizontal * vertical, _rotationSpeed * Time.deltaTime);
 
         Quaternion newPlayerRotation = Quaternion.Euler(playerRotation.x, yAngle, playerRotation.z);
 
-        m_main.transform.rotation = newPlayerRotation;
+        _main.transform.rotation = newPlayerRotation;
 
-        m_tankDirection = GetTankDirection(m_tower.transform.rotation.eulerAngles.y, newPlayerRotation.eulerAngles.y);
+        _tankDirection = GetTankDirection(_tower.transform.rotation.eulerAngles.y, newPlayerRotation.eulerAngles.y);
 
-        #region Debug
+        #if UNITY_EDITOR
 
-        horizontal = m_isInversedMoving ? horizontal : -horizontal;
+        horizontal = _isInversedMoving ? horizontal : -horizontal;
 
-        Debug.DrawLine(m_main.transform.position, m_main.transform.position + m_main.transform.forward * horizontal * 5f, Color.blue);
+        Debug.DrawLine(_main.transform.position, _main.transform.position + _main.transform.forward * horizontal * 5f, Color.blue);
 
-        Debug.DrawLine(m_main.transform.position, m_main.transform.position + m_tankDirection * 5f, Color.red);
+        Debug.DrawLine(_main.transform.position, _main.transform.position + _tankDirection * 5f, Color.red);
 
-        #endregion Debug
+        #endif
     }
 
     private Vector3 GetTankDirection(float yTowerAngle, float yBodyAngle)
     {
         yTowerAngle = Mathf.Abs(yTowerAngle - yBodyAngle);
 
-        if (m_isInversedMoving)
+        if (_isInversedMoving)
         {
             if (yTowerAngle > 320.0f || yTowerAngle < 40.0f)
             {
-                m_isInversedMoving = false;
-
-                return m_main.transform.right.normalized;
+                _isInversedMoving = false;
+                return _main.transform.right.normalized;
             }
 
-            return m_main.transform.right.normalized * -1;
+            return _main.transform.right.normalized * -1;
         }
 
         if (yTowerAngle > 130.0f && yTowerAngle < 230.0f)
         {
-            m_isInversedMoving = true;
-
-            return m_main.transform.right.normalized * -1;
+            _isInversedMoving = true;
+            return _main.transform.right.normalized * -1;
         }
 
-        return m_main.transform.right.normalized;
+        return _main.transform.right.normalized;
     }
-
-    #endregion
 }

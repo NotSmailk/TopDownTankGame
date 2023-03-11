@@ -1,27 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyTowerRotation : TowerRotation
 {
-    private EnemyComponents m_enemyComponents;
+    private EnemyDetection _detection;
 
-    private void Start()
+    public void Initialize(EnemyDetection detection, GameObject tower)
     {
-        m_enemyComponents = GetComponent<EnemyComponents>();
+        _detection = detection;
+        _tower = tower;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
-        if (m_enemyComponents.EnemyDetection.Target != null)
+        if (_detection.Target != null)
         {
-            RotateTower(m_enemyComponents.EnemyDetection.GetTargetPosition());
+            RotateTower(_detection.GetTargetPosition());
 
-            #region Debug
-
-            Debug.DrawLine(m_tower.transform.position, m_tower.transform.position + m_tower.transform.right * 5, Color.green);
-
-            #endregion Debug
+            #if UNITY_EDITOR
+            Debug.DrawLine(_tower.transform.position, _tower.transform.position + _tower.transform.right * 5, Color.green);
+            #endif
         }
     }
 }

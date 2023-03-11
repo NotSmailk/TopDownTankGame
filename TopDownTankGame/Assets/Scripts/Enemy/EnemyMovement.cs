@@ -1,37 +1,34 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class EnemyMovement : MonoBehaviour
+public class EnemyMovement
 {
-    [field: SerializeField] private float m_speed = 5f;
-    [field: SerializeField] private float m_rotationSpeed = 5f;
-    [field: SerializeField] private GameObject m_main;
-    [field: SerializeField] private GameObject m_tower;
-
-    private Rigidbody m_rigidbody;
-    private EnemyComponents m_enemyComponents;
-    private Vector3 m_tankDirection;
-    private bool m_isInversedMoving = false;
-
-    public GameObject MainModel { get => m_main; }
-    public GameObject Tower { get => m_tower; }
+    private float _speed = 5f;
+    private float _rotationSpeed = 5f;
+    private GameObject _main;
+    private GameObject _tower;
+    private Rigidbody _rigidbody;
+    private EnemyDetection _detection;
+    private EnemyTowerRotation _rotation;
+    private Vector3 _tankDirection;
 
     #region MainMethods
 
-    private void Start()
+    public void Initialize(EnemyDetection detection, EnemyTowerRotation rotation, Rigidbody rigidbody, GameObject tower, GameObject main)
     {
-        m_enemyComponents = GetComponent<EnemyComponents>();
-
-        m_rigidbody = GetComponent<Rigidbody>();
+        _detection = detection;
+        _rotation = rotation;
+        _rigidbody = rigidbody;
+        _tower = tower;
+        _main = main;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
-        if (m_enemyComponents.EnemyDetection.Target == null)
+        if (_detection.Target == null)
             return;
 
         RotateTankBody();
-
         MoveTankBody();
     }
 
@@ -41,19 +38,17 @@ public class EnemyMovement : MonoBehaviour
 
     public Vector3 GetTowerDirection()
     {
-        return m_tower.transform.right.normalized;
+        return _tower.transform.right.normalized;
     }
 
-    private Vector3 GetTankDirection(float yTowerAngle, float yBodyAngle)
+    private Vector3 GetTankDirection(float towerAngleY, float mainAngleY)
     {
-        yTowerAngle = Mathf.Abs(yTowerAngle - yBodyAngle);
+        towerAngleY = Mathf.Abs(towerAngleY - mainAngleY);
 
-        if (yTowerAngle > 90.0f && yTowerAngle < 270.0f)
-        {
-            return m_main.transform.right.normalized * -1;
-        }
+        if (towerAngleY > 90.0f && towerAngleY < 270.0f)
+            return _main.transform.right.normalized * -1;
 
-        return m_main.transform.right.normalized;
+        return _main.transform.right.normalized;
     }
 
     #endregion
@@ -62,38 +57,30 @@ public class EnemyMovement : MonoBehaviour
 
     private void MoveTankBody()
     {
-        if (!m_enemyComponents.EnemyDetection.IsChasingTarget)
+        if (!_detection.IsChasingTarget)
             return;
 
-        m_rigidbody.velocity = m_tankDirection * m_speed;
+        _rigidbody.velocity = _tankDirection * _speed;
     }
 
     private void RotateTankBody()
     {
-        if (!m_enemyComponents.EnemyDetection.IsChasingTarget)
+        if (!_detection.IsChasingTarget)
             return;
 
-        Vector3 playerRotation = m_main.transform.rotation.eulerAngles;
-
-        float targetYAngle = m_enemyComponents.EnemyTowerRotation.GetYAngleBetweenTargetAndObject(m_enemyComponents.EnemyDetection.GetTargetPosition(), m_main);
-
-        float yAngle = Mathf.MoveTowardsAngle(playerRotation.y, -targetYAngle, m_rotationSpeed * Time.deltaTime);
-
+        Vector3 playerRotation = _main.transform.rotation.eulerAngles;
+        float targetYAngle = _rotation.GetYAngleBetweenTargetAndObject(_detection.GetTargetPosition(), _main);
+        float yAngle = Mathf.MoveTowardsAngle(playerRotation.y, -targetYAngle, _rotationSpeed * Time.deltaTime);
         Quaternion newPlayerRotation = Quaternion.Euler(playerRotation.x, yAngle, playerRotation.z);
 
-        m_main.transform.rotation = newPlayerRotation;
+        _main.transform.rotation = newPlayerRotation;
+        _tankDirection = GetTankDirection(_tower.transform.rotation.eulerAngles.y, newPlayerRotation.eulerAngles.y);
 
-        m_tankDirection = GetTankDirection(m_tower.transform.rotation.eulerAngles.y, newPlayerRotation.eulerAngles.y);
-
-        #region Debug
-
+        #if UNITY_EDITOR
         int horizontal = targetYAngle > 0 ? -1 : 1;
-
-        Debug.DrawLine(m_main.transform.position, m_main.transform.position + m_main.transform.forward * horizontal * 5f, Color.blue);
-
-        Debug.DrawLine(m_main.transform.position, m_main.transform.position + m_tankDirection * 5f, Color.red);
-
-        #endregion Debug
+        Debug.DrawLine(_main.transform.position, _main.transform.position + _main.transform.forward * horizontal * 5f, Color.blue);
+        Debug.DrawLine(_main.transform.position, _main.transform.position + _tankDirection * 5f, Color.red);
+        #endif
     }
 
     #endregion MovementMethods

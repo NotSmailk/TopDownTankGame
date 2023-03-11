@@ -1,44 +1,40 @@
 using UnityEngine;
 
-public class PlayerCameraController : MonoBehaviour
+public class PlayerCameraController
 {
-    [field: SerializeField] private Camera m_Camera;
-    [field: SerializeField] private float m_heightBetweenCameraAndPlayer = 5f;
+    [field: SerializeField] private float _heightBetweenCameraAndPlayer = 15f;
 
-    private void Start()
-    {
-        InitializeCamera();
-    }
+    private Camera _camera;
+    private Transform _transform;
 
-    private void InitializeCamera()
+    public void Initialize(Camera camera, Transform transform)
     {
-        if (m_Camera == null)
-            m_Camera = GetComponentInChildren<Camera>();
+        _camera = camera;
+        _transform = transform;
 
         AdjustCameraPosition();
-
         AdjustCameraRotation();
+    }
+
+    public void GameUpdate()
+    {
+        AdjustCameraPosition();
     }
 
     private void AdjustCameraPosition()
     {
-        Vector3 newCameraPosition = new Vector3(GetPlayerPosition().x, m_heightBetweenCameraAndPlayer, GetPlayerPosition().z);
+        Vector3 newCameraPosition = new Vector3(GetPlayerPosition().x, _heightBetweenCameraAndPlayer, GetPlayerPosition().z);
 
-        m_Camera.transform.position = newCameraPosition;
+        _camera.transform.position = newCameraPosition;
     }
 
     private void AdjustCameraRotation()
     {
-        m_Camera.transform.LookAt(gameObject.transform);
+        _camera.transform.LookAt(_transform);
     }
 
     private Vector3 GetPlayerPosition()
     {
-        return transform.position;
-    }
-
-    public Camera GetCamera()
-    {
-        return m_Camera;
+        return _transform.position;
     }
 }

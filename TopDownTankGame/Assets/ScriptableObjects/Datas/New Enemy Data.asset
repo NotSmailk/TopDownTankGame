@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5535b8232a9be54c9e9e501786d3952, type: 3}
+  m_Name: New Enemy Data
+  m_EditorClassIdentifier: 
+  _enemiesData:
+  - Name: Cheetah
+    Prefab: {fileID: 8614452130833000450, guid: 695c84a64c43ed543b839eb4daf07ac8, type: 3}
+    Health: 10
+    DetectionParametres:
+      SphereRadius: 10
+      RadiusAtObservation: 15
+      ViewRadius: 15
+      ViewAngle: 15
+      ShootViewAngle: 15
+      DetectionLayer:
+        serializedVersion: 2
+        m_Bits: 64
+      ObstructionLayer:
+        serializedVersion: 2
+        m_Bits: 1
+    CannonParametres:
+      Shell: {fileID: 8455698336922858105, guid: 6d573ce825a06a447aeb4c7d4835de93, type: 3}
+      TargetMask:
+        serializedVersion: 2
+        m_Bits: 0
+      Cooldown: 1
+      Damage: 10
+  - Name: Snake
+    Prefab: {fileID: 6666108460094053784, guid: 22df8378dc9907941b6a5f90fa628bc4, type: 3}
+    Health: 15
+    DetectionParametres:
+      SphereRadius: 10
+      RadiusAtObservation: 15
+      ViewRadius: 15
+      ViewAngle: 15
+      ShootViewAngle: 15
+      DetectionLayer:
+        serializedVersion: 2
+        m_Bits: 64
+      ObstructionLayer:
+        serializedVersion: 2
+        m_Bits: 1
+    CannonParametres:
+      Shell: {fileID: 8455698336922858105, guid: 6d573ce825a06a447aeb4c7d4835de93, type: 3}
+      TargetMask:
+        serializedVersion: 2
+        m_Bits: 64
+      Cooldown: 1
+      Damage: 10
+  - Name: Panther
+    Prefab: {fileID: 3030323515974093810, guid: c0d61148d3a56f64c9582995f36dc8ba, type: 3}
+    Health: 20
+    DetectionParametres:
+      SphereRadius: 10
+      RadiusAtObservation: 15
+      ViewRadius: 15
+      ViewAngle: 15
+      ShootViewAngle: 15
+      DetectionLayer:
+        serializedVersion: 2
+        m_Bits: 64
+      ObstructionLayer:
+        serializedVersion: 2
+        m_Bits: 1
+    CannonParametres:
+      Shell: {fileID: 8455698336922858105, guid: 6d573ce825a06a447aeb4c7d4835de93, type: 3}
+      TargetMask:
+        serializedVersion: 2
+        m_Bits: 64
+      Cooldown: 1
+      Damage: 10
+  - Name: Elephant
+    Prefab: {fileID: 1634925040635805082, guid: ab672bc80fcbcef4289af067d508de69, type: 3}
+    Health: 25
+    DetectionParametres:
+      SphereRadius: 10
+      RadiusAtObservation: 15
+      ViewRadius: 15
+      ViewAngle: 15
+      ShootViewAngle: 15
+      DetectionLayer:
+        serializedVersion: 2
+        m_Bits: 64
+      ObstructionLayer:
+        serializedVersion: 2
+        m_Bits: 1
+    CannonParametres:
+      Shell: {fileID: 8455698336922858105, guid: 6d573ce825a06a447aeb4c7d4835de93, type: 3}
+      TargetMask:
+        serializedVersion: 2
+        m_Bits: 64
+      Cooldown: 1
+      Damage: 10

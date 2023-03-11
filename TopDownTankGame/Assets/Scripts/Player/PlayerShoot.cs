@@ -2,18 +2,22 @@ using UnityEngine;
 
 public class PlayerShoot : CannonShoot
 {
-    private PlayerComponents m_playerComponents;
+    private PlayerMovement _playerMovement;
+    private PlayerTowerRotation _playerTowerRotation;
 
-    private void Start()
+    public void Initialize(PlayerMovement playerMovement, PlayerTowerRotation playerTowerRotation, CannonParametres parametres, Transform shootPoint)
     {
-        m_playerComponents = GetComponent<PlayerComponents>();
+        _playerMovement = playerMovement;
+        _playerTowerRotation = playerTowerRotation;
+        _parametres = parametres;
+        _shootPoint = shootPoint;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
-        if (m_playerComponents.PlayerInputs.GetShoot())
+        if (GameInputs.GetShoot())
         {
-            Shoot(m_playerComponents.PlayerMovement.GetTowerDirection(), Quaternion.Euler(m_playerComponents.PlayerTowerRotation.GetTowerEulerAngles()));
+            Shoot(_playerMovement.TowerDirection, Quaternion.Euler(_playerTowerRotation.GetTowerEulerAngles()));
         }
     }
 }

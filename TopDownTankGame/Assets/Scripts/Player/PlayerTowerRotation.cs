@@ -2,29 +2,27 @@ using UnityEngine;
 
 public class PlayerTowerRotation : TowerRotation
 {
-    private PlayerComponents m_playerComponents;
-    private Camera m_Camera;
+    private Camera _camera;
 
-    private void Start()
+    public void Initialize(Camera camera, GameObject tower)
     {
-        m_playerComponents = GetComponent<PlayerComponents>();
-
-        m_Camera = GetComponent<PlayerCameraController>().GetCamera();
+        _camera = camera;
+        _tower = tower;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
         RotateTower(GetWorldMousePosition());
 
-        #region Debug
+        #if UNITY_EDITOR
 
-        Debug.DrawLine(m_tower.transform.position, m_tower.transform.position + m_tower.transform.right * 5, Color.green);
+        Debug.DrawLine(_tower.transform.position, _tower.transform.position + _tower.transform.right * 5, Color.green);
 
-        #endregion Debug
+        #endif
     }
 
     private Vector3 GetWorldMousePosition()
     {
-        return m_Camera.ScreenToWorldPoint(m_playerComponents.PlayerInputs.GetMousePosition() + Vector3.forward * m_Camera.transform.position.y);
+        return _camera.ScreenToWorldPoint(GameInputs.GetMousePosition() + Vector3.forward * _camera.transform.position.y);
     }
 }

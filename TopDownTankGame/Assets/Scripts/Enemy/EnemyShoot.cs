@@ -1,21 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyShoot : CannonShoot
 {
-    private EnemyComponents m_enemyComponents;
+    private EnemyDetection _detection;
+    private EnemyMovement _movement;
+    private EnemyTowerRotation _rotation;
 
-    private void Start()
+    public void Initialize(EnemyDetection detection, EnemyMovement movement, EnemyTowerRotation rotation, CannonParametres parametres, Transform shootPoint)
     {
-        m_enemyComponents = GetComponent<EnemyComponents>();
+        _detection = detection;
+        _movement = movement;
+        _rotation = rotation;
+        _parametres = parametres;
+        _shootPoint = shootPoint;
     }
 
-    private void Update()
+    public void GameUpdate()
     {
-        if (m_enemyComponents.EnemyDetection.TargetInShootDistance())
+        if (_detection.TargetInShootDistance())
         {
-            Shoot(m_enemyComponents.EnemyMovement.GetTowerDirection(), Quaternion.Euler(m_enemyComponents.EnemyTowerRotation.GetTowerEulerAngles()));
+            Shoot(_movement.GetTowerDirection(), Quaternion.Euler(_rotation.GetTowerEulerAngles()));
         }
     }
 }
